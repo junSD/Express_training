@@ -20,7 +20,7 @@ module.exports.addNewUser = function (req, res) {
     model.User
         .create(newUser)
         .then(function(user) {
-            return res.send({success: true, error: false, message: 'User was successfully added', user: [user]});
+            return res.send({success: true, error: false, message: 'User was successfully added', user: user});
         })
         .catch(function (err) {
             return res.send({success: false, error: true, message: 'User already exist', body: err});
@@ -52,15 +52,31 @@ module.exports.getUserById = function (req, res) {
         .catch(function (err) {
             return res.send({success: false, error: true, message: 'Something wrong', body: err});
         })
-}
+};
+
+module.exports.getAllUsersRefresh = function (req, res) {
+    // var users = req.body;
+    // console.log(users);
+    model.User
+        .find()
+        .then(function (user) {
+            return res.send({success: true, error: false, message: 'User was successfully got', user: user});
+        })
+        .catch(function (err) {
+            return res.send({success: false, error: true, message: 'Something wrong', body: err});
+        })
+};
+
 module.exports.editUser = function (req, res) {
     var changeUser = req.body;
     console.log(changeUser);
+    console.log(req.body);
     var query = {userName: req.body.userName, userAge: req.body.userAge};
     model.User
         // .find({_id: req.body.id})
-        .findByIdAndUpdate(req.params.id,req.body)
+        .findByIdAndUpdate(req.body.id, query, {new: true})
         .then(function (user) {
+            console.log(user);
             return res.send({success: true, error: false, message: 'User was successfully got', user: user, changeUser: changeUser});
         })
         .catch(function (err) {
