@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Table of users</title>
+    <link rel='stylesheet' href='/stylesheets/main.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!--<style>-->
+        <!--.wrapper {-->
+            <!--width: 50%;-->
+            <!--margin: 10px auto;-->
+            <!--padding: 10px 20px;-->
+            <!--background-color: #cad6ff;-->
+        <!--}-->
+        <!--.title__main {-->
+            <!--text-align: center;-->
+        <!--}-->
+        <!--.table__users {-->
+            <!--margin-top: 20px;-->
+            <!--border-collapse: collapse;-->
+            <!--width: 80%;-->
+        <!--}-->
+        <!--.table__users th,-->
+        <!--.table__users td {-->
+            <!--border: 1px solid black;-->
+            <!--padding: 5px;-->
+        <!--}-->
+        <!--.table__users td:nth-child(2) {-->
+            <!--text-align: center;-->
+            <!--width: 30%;-->
+        <!--}-->
+        <!--.table__tr {-->
+            <!--background: aliceblue;-->
+        <!--}-->
+        <!--.form__users {-->
+            <!--width: 50%;-->
+            <!--margin-top: 20px;-->
+        <!--}-->
+        <!--.users__label {-->
+            <!--display: inline-block;-->
+            <!--width: 70%;-->
+            <!--margin-bottom: 10px;-->
+            <!--text-align: left;-->
+        <!--}-->
+        <!--.users__input {-->
+            <!--display: inline-block;-->
+            <!--width: 70%;-->
+            <!--margin-bottom: 10px;-->
+            <!--padding: 5px 5px 5px 3px;-->
+            <!--outline: none;-->
+        <!--}-->
+        <!--.users__submit {-->
+            <!--display: block;-->
+        <!--}-->
+    <!--</style>-->
+</head>
+<body>
+<div class="wrapper">
+    <h1 class="title__main">Lists of users</h1>
+    <table class="table__users" id="tableUser">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(function (user) {%>
+                <tr data-rowid="<%=user._id%>" class="table__tr">
+                    <td><%= user.userName %></td>
+                    <td><%= user.userAge %></td>
+                    <td><button data-id="<%=user._id%>" class="editUser">Edit</button></td>
+                    <td><button data-id="<%=user._id%>" class="removeUser">Delete</button></td>
+                </tr>
+            <%});%>
+        </tbody>
+    </table>
+    <form name="userForm" class="form__users" action="/register" method="post">
+        <input type="hidden" name="id" value="0">
+        <label class="users__label" for="user__name">User name</label>
+        <input class="users__input" type="text" id="user__name" name="userName" placeholder="Enter user name">
+        <label class="users__label" for="user__age">User age</label>
+        <input class="users__input" type="text" id="user__age" name="userAge" placeholder="Enter user age">
+        <input class="users__submit" type="submit" value="Save user">
+    </form>
+</div>
+
+<script src='/javascripts/ajax.js'></script>
+</body>
+</html>

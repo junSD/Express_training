@@ -1,0 +1,49 @@
+body {
+    font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.wrapper {
+    width: 70%;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background-color: #cad6ff;
+}
+.title__main {
+    text-align: center;
+}
+.table__users {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 80%;
+}
+.table__users th,
+.table__users td {
+    border: 1px solid black;
+    padding: 5px;
+}
+.table__users td:nth-child(n+2) {
+    text-align: center;
+    width: 20%;
+}
+.table__tr {
+    background: aliceblue;
+}
+.form__users {
+    width: 50%;
+    margin-top: 20px;
+}
+.users__label {
+    display: inline-block;
+    width: 70%;
+    margin-bottom: 10px;
+    text-align: left;
+}
+.users__input {
+    display: inline-block;
+    width: 70%;
+    margin-bottom: 10px;
+    padding: 5px 5px 5px 3px;
+    outline: none;
+}
+.users__submit {
+    display: block;
+}
