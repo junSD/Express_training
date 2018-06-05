@@ -14,15 +14,14 @@ $("form").submit(function (e) {
     } else {
         editUser(id, name, age);
     }
-
-
 });
+
 function sendError(message) {
     console.log(message);
-}
+};
 function createUser(userName, userAge) {
     $.ajax({
-        url: "/register",
+        url: "/users/",
         contentType: "application/json",
         method: "POST",
         data: JSON.stringify({
@@ -35,11 +34,11 @@ function createUser(userName, userAge) {
             var table = document.getElementById("tableUser");
             var tbody = table.tBodies[0];
             if (response.error) {
-                console.log(response.body.name + ' - ' + response.message);
+                console.log(response.errorBody.name + ' - ' + response.message);
             } else {
                     var newUser = document.createElement('tr');
                     newUser.className = 'table__tr';
-                    newUser.setAttribute('data-rowid', response.user._id);
+                    newUser.setAttribute('data-rowid', response.data._id);
                     newUser.innerHTML = createRow(response);
                     tbody.appendChild(newUser);
                     console.log(tbody);
@@ -51,10 +50,10 @@ function createUser(userName, userAge) {
 function createRow(response) {
     console.log('From row: ',response);
     var row;
-    if (typeof response.user === 'object') {
-        row = "<td>" + response.user.userName + "</td><td>" + response.user.userAge + "</td>"
-            + "<td><button data-id='" + response.user._id + "' class='editUser'>Edit</button></td>" +
-            "<td><button data-id='" + response.user._id + "' class='removeUser'>Delete</button></td>";
+    if (typeof response.data === 'object') {
+        row = "<td>" + response.data.userName + "</td><td>" + response.data.userAge + "</td>"
+            + "<td><button data-id='" + response.data._id + "' class='editUser'>Edit</button></td>" +
+            "<td><button data-id='" + response.data._id + "' class='removeUser'>Delete</button></td>";
     }
     return row;
 }
@@ -73,10 +72,11 @@ function deleteUser(id) {
         success: function (response) {
             console.log(response);
             console.log(response.message);
-            console.log(response.id);
-            var rowToDelete = $("tr[data-rowid='" +response.id + "']");
+            console.log(response.data);
+            var id = response.data;
+            var rowToDelete = $("tr[data-rowid='" + id + "']");
             console.log(rowToDelete);
-            $("tr[data-rowid='" +response.id + "']").remove();
+            rowToDelete.remove();
         }
     })
 }
@@ -89,9 +89,9 @@ function getUser(id) {
         success: function (response) {
             console.log(response);
             var form = document.forms['userForm'];
-            form.elements['id'].value = response.user[0]._id;
-            form.elements['userName'].value = response.user[0].userName;
-            form.elements['userAge'].value = response.user[0].userAge;
+            form.elements['id'].value = response.data[0]._id;
+            form.elements['userName'].value = response.data[0].userName;
+            form.elements['userAge'].value = response.data[0].userAge;
         }
     })
 }
@@ -109,43 +109,50 @@ function editUser(id, userName, userAge) {
         success: function (response) {
             reset();
             var form = document.forms['userForm'];
-            console.log(form.elements["id"].value);
-            form.elements["id"].value = 0;
             console.log(response);
-            var changeUser = document.createElement('tr');
-            changeUser.className = 'table__tr';
-            changeUser.setAttribute('data-rowid', response.user._id);
-            changeUser.innerHTML = createRow(response);
-            $("tr[data-rowid='" +response.user._id + "']").replaceWith(changeUser);
-            console.log('Edit ready');
+            console.log(response.success);
+            if (response.success) {
+                console.log(form.elements["id"].value);
+                form.elements["id"].value = 0;
+                console.log(response);
+                var changeUser = document.createElement('tr');
+                changeUser.className = 'table__tr';
+                changeUser.setAttribute('data-rowid', response.data._id);
+                changeUser.innerHTML = createRow(response);
+                $("tr[data-rowid='" +response.data._id + "']").replaceWith(changeUser);
+                console.log('Edit ready');
+            } else {
+                console.log('Incorrect data was send to backend');
+                form.elements["id"].value = 0;
+            }
         }
     })
 }
 
-function getAllUsers() {
+function getAllUsersToRefresh() {
     $.ajax({
-        url: "/usersrefresh/",
+        url: "/users/",
         contentType: "application/json",
         method: "GET",
         success: function (response) {
             console.log(response);
-            var table = document.getElementById("tableUser");
-            var tbody = table.tBodies[0];
-            console.log(tbody);
-            console.log('Length: ', response.user.length);
-            table.innerHTML = '';
-            for (var i = 0; i < response.user.length; i++) {
-                console.log(response.user[i]);
-                var userTr = document.createElement('tr');
-                userTr.className = 'table__tr';
-                userTr.setAttribute('data-rowid', response.user[i]._id);
-                userTr.innerHTML = "<td>" + response.user[i].userName + "</td><td>" + response.user[i].userAge + "</td>"
-                    + "<td><button data-id='" + response.user[i]._id + "' class='editUser'>Edit</button></td>" +
-                    "<td><button data-id='" + response.user[i]._id + "' class='removeUser'>Delete</button></td>";;
-                table.appendChild(userTr);
-                console.log('response user: ', response.user);
-            }
-            console.log(tbody);
+            // var table = document.getElementById("tableUser");
+            // var tbody = table.tBodies[0];
+            // console.log(tbody);
+            // console.log('Length: ', response.user.length);
+            // table.innerHTML = '';
+            // for (var i = 0; i < response.user.length; i++) {
+            //     console.log(response.user[i]);
+            //     var userTr = document.createElement('tr');
+            //     userTr.className = 'table__tr';
+            //     userTr.setAttribute('data-rowid', response.user[i]._id);
+            //     userTr.innerHTML = "<td>" + response.user[i].userName + "</td><td>" + response.user[i].userAge + "</td>"
+            //         + "<td><button data-id='" + response.user[i]._id + "' class='editUser'>Edit</button></td>" +
+            //         "<td><button data-id='" + response.user[i]._id + "' class='removeUser'>Delete</button></td>";;
+            //     table.appendChild(userTr);
+            //     console.log('response user: ', response.user);
+            // }
+            // console.log(tbody);
         }
     })
 }
@@ -154,18 +161,18 @@ var tableUsers = document.querySelector("#tableUser");
 console.log(tableUsers);
 tableUsers.addEventListener('click', function (e) {
     e.preventDefault();
-    var elem = e.target;
-    console.log(elem.classList.value);
+    var elem = e.target,
+        id;
     if (elem.tagName.toLowerCase() === 'button') {
-        if (elem.classList.value === 'removeUser') {
+        if (elem.classList.contains('removeUser')) {
             console.log('Delete');
-            var id = elem.dataset.id;
+            id = elem.dataset.id;
             console.log(id);
             deleteUser(id);
         }
-        if (elem.classList.value === 'editUser') {
+        if (elem.classList.contains('editUser')) {
             console.log('Edit');
-            var id = elem.dataset.id;
+            id = elem.dataset.id;
             console.log(id);
             getUser(id);
         }
@@ -174,15 +181,34 @@ tableUsers.addEventListener('click', function (e) {
 
 var buttonRefreshUser = document.querySelector("#refreshUsers");
 buttonRefreshUser.addEventListener('click', function () {
-    getAllUsers();
+    getAllUsersToRefresh();
 });
 
 function checkData(name, age) {
     var isCheck = false;
     var patternName = /[a-zA-Z]+/;
     var patternAge = /\d{1,2}/;
-    if ((name !== '' || patternName.test(name)) && (age >= 0 && age < 100 && patternAge.test(age)) )  {
+    if ((name !== '' && patternName.test(name)) && (age >= 0 && age < 100 && patternAge.test(age)) )  {
         isCheck = true;
     }
     return isCheck;
+};
+
+// document.addEventListener("DOMContentLoaded", getAllUsers);
+function getAllUsers() {
+    $.ajax({
+        url: "/users/",
+        contentType: "application/json",
+        method: "GET",
+        success: function (response) {
+            console.log(response);
+            var users = response.user;
+            // console.log(users);
+            // return users;
+        },
+        error: function(xhr, error){
+            console.debug(xhr);
+            console.debug(error);
+        }
+    })
 }
