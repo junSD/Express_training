@@ -11,6 +11,7 @@ class SuccessResponse {
         this.data = payload;
     }
 }
+
 class ErrorResponse {
     constructor(messageStr, payload) {
         this.success = false;
@@ -50,9 +51,9 @@ module.exports.getAllUsers = function (req, res, next) {
 };
 
 module.exports.addNewUser = function (req, res, next) {
+    var newUser = req.body;
+    if (checkData(newUser.userName, newUser.userAge)) {
 
-    if (checkData(req.body.userName, req.body.userAge)) {
-        var newUser = req.body;
         model.User
             .create(newUser)
             .then(function(user) {
@@ -99,13 +100,8 @@ module.exports.getUserById = function (req, res, next) {
                 return res.send(resSuccess);
             })
             .catch(function (err) {
-                // var errorUserCl = new ErrorMessage('Something wrong');
                 var customError = new CustomError('Custom Error', 55555);
                 console.log('CustomError=============CustomError', customError);
-                // console.log('ErrorUser: ------------=------------' , errorUserCl);
-                // console.log('Message: ' , errorUserCl.message);
-                // console.log('Value-----------: ' , errorUserCl.stringValue);
-                // console.log('errorUserCl: ' , errorUserCl);
                 console.log('Error-Native: ' , err);
                 next(err);
             })
@@ -128,11 +124,12 @@ module.exports.getAllUsersRefresh = function (req, res, next) {
 };
 
 module.exports.editUser = function (req, res, next) {
-    if (checkData(req.body.userName, req.body.userAge)) {
-        var query = {userName: req.body.userName, userAge: req.body.userAge};
+    var userEdit = req.body;
+    if (checkData(userEdit.userName, userEdit.userAge)) {
+        var query = {userName: userEdit.userName, userAge: userEdit.userAge};
         console.log(query);
         model.User
-            .findByIdAndUpdate(req.body.id, query, {new: true})
+            .findByIdAndUpdate(userEdit.id, query, {new: true})
             .then(function (user) {
                 console.log(user);
                 var resSuccess = new SuccessResponse('User was successfully got',user);
