@@ -47,3 +47,7 @@ body {
 .users__submit {
     display: block;
 }
+#refreshUsers {
+    display: inline-block;
+    margin-top: 10px;
+}
